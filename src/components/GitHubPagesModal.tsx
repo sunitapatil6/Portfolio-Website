@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Globe, Copy, Check, Download, Terminal, FolderGit2, Sparkles, CheckCircle2 } from 'lucide-react';
+import { X, Globe, Copy, Check, Download, Terminal, FolderGit2, AlertTriangle, CheckCircle2, ChevronRight } from 'lucide-react';
 import { PORTFOLIO_DATA } from '../data/portfolioData';
 
 interface GitHubPagesModalProps {
@@ -18,66 +18,13 @@ export const GitHubPagesModal: React.FC<GitHubPagesModalProps> = ({ isOpen, onCl
     setTimeout(() => setCopiedKey(null), 2500);
   };
 
-  const gitCommands = `# 1. Initialize git and commit files
-git init
+  const gitCommands = `# 1. Add and commit all files including the new GitHub workflow and dist
 git add .
-git commit -m "Add Sunita Patil academic portfolio website"
+git commit -m "Fix GitHub Pages blank screen with relative paths and workflow"
 
-# 2. Add your GitHub repository (replace with your GitHub username)
-# If repo name is <username>.github.io, it will be hosted at https://<username>.github.io/
-git branch -M main
-git remote add origin https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME.git
+# 2. Push to your GitHub repository
+git push origin main`;
 
-# 3. Push to GitHub
-git push -u origin main`;
-
-  const githubActionsYaml = `name: Deploy Portfolio to GitHub Pages
-
-on:
-  push:
-    branches: [main]
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: 'pages'
-  cancel-in-progress: true
-
-jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: \${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build static site
-        run: npm run build
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './dist'
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4`;
-
-  // Function to download a ready-to-run static HTML file
   const handleDownloadStaticHTML = () => {
     const htmlContent = `<!DOCTYPE html>
 <html lang="en">
@@ -143,7 +90,7 @@ jobs:
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'sunita-patil-portfolio.html';
+    a.download = 'index.html';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -152,7 +99,7 @@ jobs:
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative my-8 max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-2xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative my-8 max-h-[92vh] overflow-y-auto">
         
         {/* Header */}
         <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-200">
@@ -160,11 +107,11 @@ jobs:
             <div className="flex items-center gap-2 text-indigo-900">
               <Globe className="w-5 h-5 text-indigo-700" />
               <h3 className="font-serif-display text-xl font-bold text-slate-900">
-                Static Pages & GitHub Pages Deployment Guide
+                Fixing Blank Screen & GitHub Pages Setup
               </h3>
             </div>
             <p className="text-xs text-slate-500 mt-1">
-              This portfolio is completely static and optimized to run directly on GitHub Pages with zero server dependencies.
+              Why your site was blank on GitHub and how to fix it in 2 simple steps.
             </p>
           </div>
           <button
@@ -179,15 +126,100 @@ jobs:
         {/* Content */}
         <div className="mt-6 space-y-6">
           
-          {/* Quick Action: Download Static Standalone HTML */}
+          {/* Solution 1: The #1 Reason for Blank Screen */}
+          <div className="p-4 bg-amber-50/80 rounded-xl border border-amber-200">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-sm font-bold text-amber-950">
+                  Why your page looked blank on GitHub:
+                </h4>
+                <div className="text-xs text-amber-900 mt-1 space-y-1.5">
+                  <p>
+                    <strong>Reason 1 (Fixed!):</strong> Vite was looking for files at the root domain (<code className="bg-white px-1 py-0.5 rounded text-slate-800">/assets/</code>) instead of your GitHub repository subfolder (<code className="bg-white px-1 py-0.5 rounded text-slate-800">./assets/</code>). I have now updated <code className="font-mono bg-white px-1 py-0.5 rounded">vite.config.ts</code> with <code className="font-bold text-emerald-800">base: './'</code> so all links are relative and work everywhere!
+                  </p>
+                  <p>
+                    <strong>Reason 2 (Action needed in GitHub):</strong> GitHub Pages must be configured to use <strong>GitHub Actions</strong> instead of trying to run raw unbuilt TypeScript files directly.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* How to Fix in GitHub in 1 Minute */}
+          <div className="space-y-3">
+            <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              How to Fix Your GitHub Pages Settings:
+            </h4>
+
+            <div className="space-y-2.5 text-xs text-slate-700">
+              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-start gap-3">
+                <span className="w-5 h-5 rounded-full bg-indigo-900 text-white flex items-center justify-center font-bold text-[11px] shrink-0">1</span>
+                <div>
+                  <strong>Open your GitHub Repository:</strong> Go to your repo on <a href="https://github.com" target="_blank" rel="noreferrer" className="text-indigo-700 hover:underline">GitHub.com</a>.
+                </div>
+              </div>
+
+              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-start gap-3">
+                <span className="w-5 h-5 rounded-full bg-indigo-900 text-white flex items-center justify-center font-bold text-[11px] shrink-0">2</span>
+                <div>
+                  Click on <strong>Settings</strong> (top tab) → on the left sidebar, click <strong>Pages</strong>.
+                </div>
+              </div>
+
+              <div className="p-3 bg-emerald-50/80 rounded-lg border border-emerald-200 flex items-start gap-3">
+                <span className="w-5 h-5 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-[11px] shrink-0">3</span>
+                <div>
+                  Under <strong>Build and deployment &gt; Source</strong>, click the dropdown and select:
+                  <div className="mt-1 font-bold text-emerald-900 text-sm">
+                    ✨ GitHub Actions
+                  </div>
+                  <div className="text-emerald-800 text-[11px] mt-0.5">
+                    (Do NOT choose "Deploy from a branch"). Because we added <code className="font-mono bg-white px-1 rounded">.github/workflows/deploy.yml</code>, GitHub Actions will now automatically build and publish your site with zero blank screens!
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Push changes command */}
+          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold text-slate-800">
+                Push the latest fixes to GitHub:
+              </span>
+              <button
+                onClick={() => handleCopy(gitCommands, 'git')}
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-700 hover:text-indigo-900 cursor-pointer"
+              >
+                {copiedKey === 'git' ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    <span className="text-emerald-700">Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5" />
+                    <span>Copy Commands</span>
+                  </>
+                )}
+              </button>
+            </div>
+            <pre className="p-2.5 bg-slate-900 text-slate-100 rounded text-[11px] font-mono overflow-x-auto select-all">
+              {gitCommands}
+            </pre>
+          </div>
+
+          {/* Alternative: Instant Standalone Single File index.html */}
           <div className="p-4 bg-indigo-50/60 rounded-xl border border-indigo-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <Download className="w-4 h-4 text-indigo-700" />
-                Standalone Static HTML File
+                Quickest Alternative: Standalone single-file index.html
               </h4>
               <p className="text-xs text-slate-600 mt-0.5">
-                Download an all-in-one HTML file containing your full portfolio that opens in any browser or can be directly committed as <code className="text-indigo-900 font-mono">index.html</code>.
+                If you prefer not to use build tools, download this all-in-one <code className="font-mono text-indigo-900">index.html</code> file. You can simply upload it directly to your GitHub repository and it will render immediately!
               </p>
             </div>
             <button
@@ -195,97 +227,8 @@ jobs:
               className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-indigo-900 hover:bg-indigo-800 rounded-lg transition-colors whitespace-nowrap cursor-pointer shadow-xs"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>Download Static HTML</span>
+              <span>Download index.html</span>
             </button>
-          </div>
-
-          {/* Method 1: Standard GitHub Pages via Git */}
-          <div>
-            <h4 className="text-sm font-bold text-slate-900 mb-2 flex items-center gap-2">
-              <FolderGit2 className="w-4 h-4 text-slate-700" />
-              How to Publish on GitHub Pages in 3 Steps:
-            </h4>
-            
-            <div className="space-y-3 text-xs text-slate-700">
-              <div className="flex items-start gap-2.5 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <span className="w-5 h-5 rounded-full bg-indigo-900 text-white flex items-center justify-center font-bold text-[11px] shrink-0">1</span>
-                <div>
-                  <strong>Create a new GitHub Repository:</strong> Go to <a href="https://github.com/new" target="_blank" rel="noreferrer" className="text-indigo-700 hover:underline">github.com/new</a> and create a repository named <code className="font-mono bg-white px-1.5 py-0.5 rounded border border-slate-200 text-indigo-900 font-bold">&lt;your-username&gt;.github.io</code> (or any repo name like <code className="font-mono">portfolio</code>).
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2.5 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <span className="w-5 h-5 rounded-full bg-indigo-900 text-white flex items-center justify-center font-bold text-[11px] shrink-0">2</span>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <strong>Push your code using Git terminal commands:</strong>
-                    <button
-                      onClick={() => handleCopy(gitCommands, 'git')}
-                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-700 hover:text-indigo-900 cursor-pointer"
-                    >
-                      {copiedKey === 'git' ? (
-                        <>
-                          <Check className="w-3.5 h-3.5 text-emerald-600" />
-                          <span className="text-emerald-700">Copied</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3.5 h-3.5" />
-                          <span>Copy Commands</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                  <pre className="p-2.5 bg-slate-900 text-slate-100 rounded text-[11px] font-mono overflow-x-auto select-all">
-                    {gitCommands}
-                  </pre>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2.5 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <span className="w-5 h-5 rounded-full bg-indigo-900 text-white flex items-center justify-center font-bold text-[11px] shrink-0">3</span>
-                <div>
-                  <strong>Turn on GitHub Pages:</strong> In your GitHub repository, click <strong>Settings</strong> → <strong>Pages</strong> → Under <em>Build and deployment Source</em>, select <strong>GitHub Actions</strong> (or Deploy from branch <code className="font-mono text-slate-800">gh-pages</code> / <code className="font-mono text-slate-800">main</code>).
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* GitHub Actions Workflow file */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                <Terminal className="w-3.5 h-3.5 text-slate-500" />
-                Optional: Automated GitHub Actions Workflow (.github/workflows/deploy.yml)
-              </h4>
-              <button
-                onClick={() => handleCopy(githubActionsYaml, 'yaml')}
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-700 hover:text-indigo-900 cursor-pointer"
-              >
-                {copiedKey === 'yaml' ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    <span className="text-emerald-700">Copied YAML</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>Copy YAML</span>
-                  </>
-                )}
-              </button>
-            </div>
-            <pre className="p-3 bg-slate-900 text-slate-100 rounded-xl text-[11px] font-mono overflow-x-auto max-h-48 select-all">
-              {githubActionsYaml}
-            </pre>
-          </div>
-
-          {/* Passport Photo Guidance */}
-          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600">
-            <h5 className="font-bold text-slate-900 mb-1">Using your uploaded photo on GitHub:</h5>
-            <p>
-              Your uploaded photo is already integrated into the portfolio design. If you wish to replace it at any time in the future, simply copy your photo file to <code className="font-mono text-indigo-900 bg-white px-1 py-0.5 rounded border border-slate-200">public/profile.jpg</code> and commit to GitHub!
-            </p>
           </div>
 
         </div>
@@ -296,7 +239,7 @@ jobs:
             onClick={onClose}
             className="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg cursor-pointer"
           >
-            Done
+            Close Guide
           </button>
         </div>
 

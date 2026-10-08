@@ -12,40 +12,30 @@ Academic and research portfolio website for **Prof. Sunita Ramesh Patil**, Assis
 
 ---
 
-## Deploying to GitHub Pages (Static Hosting)
+## Why did GitHub Pages look blank? (And how it is fixed)
 
-This portfolio is completely static. Follow these quick steps to host it for free on GitHub Pages:
+A blank white page on GitHub Pages occurs due to two common reasons:
 
-### Option A: Automatic Deployment with GitHub Actions (Recommended)
+### 1. Relative Asset Paths (`base: './'`) — FIXED
+By default, Vite points to `/assets/...` (root domain). On GitHub Pages, your site lives in a subfolder (`https://<username>.github.io/<repository-name>/`), which caused assets to return `404 Not Found`.
+- **Status:** **Fixed!** `vite.config.ts` now uses `base: './'`, ensuring all stylesheets, scripts, and images load correctly regardless of repository name.
 
-1. Create a repository on GitHub (e.g., `sunita-patil-portfolio` or `<your-username>.github.io`).
-2. Push this project to GitHub:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial portfolio commit"
-   git branch -M main
-   git remote add origin https://github.com/<YOUR-GITHUB-USERNAME>/<YOUR-REPO-NAME>.git
-   git push -u origin main
-   ```
-3. In your GitHub repository:
-   - Go to **Settings** → **Pages**.
-   - Under **Build and deployment > Source**, select **GitHub Actions**.
-   - Your site will automatically build and publish!
+### 2. GitHub Pages Source Setting
+If your GitHub Pages settings are set to **"Deploy from a branch (main / root)"**, GitHub tries to serve the unbuilt `src/main.tsx` file directly, which web browsers cannot execute.
 
-### Option B: Build and Deploy the Static `dist` Folder
+**The Fix in 2 Steps:**
+1. In your GitHub repository, click **Settings** → **Pages** (in the left sidebar).
+2. Under **Build and deployment > Source**, choose:
+   👉 **GitHub Actions** (NOT "Deploy from a branch")
+3. We have provided `.github/workflows/deploy.yml` in this repository. Once you select **GitHub Actions**, GitHub will automatically build and publish your site with zero blank screens!
 
-1. Run the build command locally:
-   ```bash
-   npm install
-   npm run build
-   ```
-2. The static files will be generated in the `dist/` directory.
-3. You can deploy using the `gh-pages` npm package:
-   ```bash
-   npx gh-pages -d dist
-   ```
+---
 
-### Customizing Your Photo
+## Quick Deployment Commands
 
-Your uploaded passport photo is included in the assets. To update or replace it at any time in the future, simply place your photo at `public/profile.jpg` and redeploy.
+```bash
+# 1. Commit and push the latest fixes
+git add .
+git commit -m "Fix GitHub Pages blank screen with relative paths and GitHub Actions workflow"
+git push origin main
+```
